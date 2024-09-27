@@ -89,6 +89,11 @@ const reducer = (state, action) => {
           ...action.payload,
         },
       };
+    case "CLEAR_ALERT":
+      return {
+        ...state,
+        alert: "",
+      };
     default:
       throw new Error("Invalid action");
   }
@@ -97,6 +102,16 @@ export const ContactContext = createContext();
 
 function Contacts() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (state.alert) {
+      const timer = setTimeout(() => {
+        dispatch({ type: "CLEAR_ALERT" });
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state.alert]);
 
   const changeHandler = (e) => {
     const { name, value } = e.target;
