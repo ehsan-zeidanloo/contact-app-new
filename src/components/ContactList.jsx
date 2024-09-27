@@ -4,7 +4,8 @@ import ContactItem from "./ContactItem";
 import styles from "./ContactList.module.css";
 
 function ContactList() {
-  const state = useContext(ContactContext);
+  const reducer = useContext(ContactContext);
+  const {state}=reducer
   // console.log(state);
   return (
     <div className={styles.container}>

@@ -3,13 +3,18 @@ import { ContactContext } from "./Contacts";
 import styles from "./ContactItem.module.css";
 
 function ContactItem() {
-  const state = useContext(ContactContext);
-  const { contacts } = state;
-  console.log(contacts);
+  const reducer = useContext(ContactContext);
+  const {
+    state: { contacts },
+    dispatch,
+  } = reducer;
+  // const {contacts}=state
+  // console.log(contacts);
+
   return (
     <>
       {contacts.map((contact) => (
-        <div className={styles.item} key={contact.id}>
+        <li className={styles.item} key={contact.id}>
           <p>
             {contact.name} {contact.lastName}
           </p>
@@ -21,14 +26,24 @@ function ContactItem() {
             <span>📞</span>
             {contact.phone}
           </p>
-          <button onClick={() => console.log("deleted")}>🗑️</button>
-          <button onClick={() => console.log("edited")}>✏️</button>
+          <button
+            onClick={() =>
+              dispatch({ type: "DELETE_HANDLER", payload: contact })
+            }
+          >
+            🗑️
+          </button>
+          <button
+            onClick={() => dispatch({ type: "EDIT_CONTACT", payload: contact })}
+          >
+            ✏️
+          </button>
           <input
             type="checkbox"
             // checked={selected}
             onChange={() => console.log("checked")}
           />
-        </div>
+        </li>
       ))}
     </>
   );

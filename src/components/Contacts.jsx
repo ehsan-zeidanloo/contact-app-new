@@ -1,11 +1,14 @@
 import { useState, useReducer, useEffect, createContext } from "react";
+import { v4 } from "uuid";
 import styles from "./Contacts.module.css";
 import inputs from "./../constants/inputs";
 import ContactList from "./ContactList";
+import Modal from "./Modal";
 
 const initialState = {
   isEdit: false,
   alert: "",
+  isModal: false,
   contact: {
     id: "",
     name: "",
@@ -26,10 +29,22 @@ const reducer = (state, action) => {
         !state.contact.phone
       ) {
         return { ...state, alert: "please enter valid data" };
+      } else if (state.isEdit) {
+        const updatedContacts = state.contacts.map((contact) =>
+          contact.id === state.contact.id ? { ...state.contact } : contact
+        );
+        return {
+          ...state,
+          isEdit: false,
+          alert: "!مخاطب ویرایش شد",
+
+          contacts: updatedContacts,
+          contact: { id: "", name: "", lastName: "", email: "", phone: "" },
+        };
       } else {
         // add new contact
         const newContact = {
-          id: state.contact.id,
+          id: v4(),
           name: state.contact.name,
           lastName: state.contact.lastName,
           email: state.contact.email,
@@ -51,6 +66,29 @@ const reducer = (state, action) => {
           [action.payload.name]: action.payload.value,
         },
       };
+    case "DELETE_HANDLER":
+      return {
+        ...state,
+        isModal: true,
+        contact: action.payload,
+      };
+    case "CONFIRM-DELETE": {
+      const newContacts = state.contacts.filter(
+        (contact) => contact.id !== action.payload
+      );
+      return { ...state, contacts: newContacts, isModal: false };
+    }
+    case "CANCEL-DELETE":
+      return { ...state, isModal: false };
+
+    case "EDIT_CONTACT":
+      return {
+        ...state,
+        isEdit: true,
+        contact: {
+          ...action.payload,
+        },
+      };
     default:
       throw new Error("Invalid action");
   }
@@ -66,7 +104,7 @@ function Contacts() {
   };
 
   return (
-    <ContactContext.Provider value={state}>
+    <ContactContext.Provider value={{ state, dispatch }}>
       <div className={styles.container}>
         <div className={styles.form}>
           {inputs.map((input, index) => (
@@ -83,9 +121,14 @@ function Contacts() {
             {state.isEdit ? "Edit" : "Add"}
           </button>
         </div>
-      
+
         <ContactList />
-        <div className={styles.alert}>{state.alert}</div>
+        <Modal />
+        {state.alert && (
+          <div className={styles.alert}>
+            <p>{state.alert}</p>
+          </div>
+        )}
       </div>
     </ContactContext.Provider>
   );
