@@ -1,0 +1,39 @@
+{
+  "contacts": [
+    {
+      "id": "1",
+      "name": "John",
+      "lastName": "Doe",
+      "email": "john.doe@example.com",
+      "phone": "123-456-7890"
+    },
+    {
+      "id": "2",
+      "name": "Jane",
+      "lastName": "Doe",
+      "email": "jane.doe@example.com",
+      "phone": "098-765-4321"
+    },
+    {
+      "id": "3",
+      "name": "Alice",
+      "lastName": "Smith",
+      "email": "alice.smith@example.com",
+      "phone": "555-555-5555"
+    },
+    {
+      "id": "4",
+      "name": "Bob",
+      "lastName": "Johnson",
+      "email": "bob.johnson@example.com",
+      "phone": "444-444-4444"
+    },
+    {
+      "id": "5",
+      "name": "Charlie",
+      "lastName": "Brown",
+      "email": "charlie.brown@example.com",
+      "phone": "333-333-3333"
+    }
+  ]
+}

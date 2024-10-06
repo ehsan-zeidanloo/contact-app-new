@@ -1,5 +1,6 @@
 import { useState, useReducer, useEffect, createContext } from "react";
 import { v4 } from "uuid";
+import axios from "axios";
 import styles from "./Contacts.module.css";
 import inputs from "./../constants/inputs";
 import ContactList from "./ContactList";
@@ -21,6 +22,11 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "SET_CONTACTS":
+      return {
+        ...state,
+        contacts: action.payload,
+      };
     case "ADD_CONTACT":
       if (
         !state.contact.name ||
@@ -94,6 +100,17 @@ const reducer = (state, action) => {
         ...state,
         alert: "",
       };
+    case "DELETE_SELECTED_CONTACTS": {
+      return {
+        ...state,
+
+        contacts: state.contacts.filter(
+          (contact) => !action.payload.includes(contact.id)
+        ),
+      };
+    }
+    case "SET_ALERT":
+      return { ...state, alert: action.payload };
     default:
       throw new Error("Invalid action");
   }
@@ -102,6 +119,20 @@ export const ContactContext = createContext();
 
 function Contacts() {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:3000/contacts");
+        console.log(response.data);
+        dispatch({ type: "SET_CONTACTS", payload: response.data });
+      } catch (error) {
+        console.error("Error fetching contacts", error);
+        dispatch({ type: "SET_ALERT", payload: "Unable to fetch contacts" });
+      }
+    };
+    fetchContacts();
+  }, []);
 
   useEffect(() => {
     if (state.alert) {
